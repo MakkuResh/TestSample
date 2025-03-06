@@ -78,6 +78,20 @@ fig_term_comparison = px.bar(df_filtered, x="Year", y="Enrolled", color="Term",
                              color_discrete_map={"Spring": "#17BECF", "Fall": "#9467BD"}, template="plotly_dark")
 st.plotly_chart(fig_term_comparison, use_container_width=True)
 
+# Compare Trends Between Departments, Retention Rates, and Satisfaction Levels
+st.subheader("📊 Comparison of Trends Across Departments")
+fig_dept_comparison = px.line(df_filtered, x="Year", y=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"], 
+                              title="Enrollment Trends by Department", markers=True, template="plotly_dark")
+st.plotly_chart(fig_dept_comparison, use_container_width=True)
+
+fig_retention_comparison = px.line(df_filtered, x="Year", y="Retention Rate (%)", color="Term", 
+                                   title="Retention Rate Comparison by Term", markers=True, template="plotly_dark")
+st.plotly_chart(fig_retention_comparison, use_container_width=True)
+
+fig_satisfaction_comparison = px.line(df_filtered, x="Year", y="Student Satisfaction (%)", color="Term", 
+                                      title="Student Satisfaction Levels by Term", markers=True, template="plotly_dark")
+st.plotly_chart(fig_satisfaction_comparison, use_container_width=True)
+
 # Insights Section with Highlighted Box
 st.subheader("🔍 Key Insights")
 st.markdown("""
@@ -86,6 +100,7 @@ st.markdown("""
     <li>📈 <b>Retention and satisfaction have steadily increased over the years.</b></li>
     <li>🎓 <b>Engineering sees the highest enrollment, followed by Business.</b></li>
     <li>🍂 <b>Fall enrollments are generally higher than Spring enrollments.</b></li>
+    <li>📊 <b>Trends in retention and satisfaction show consistent improvement across terms.</b></li>
     </ul>
     </div>
 """, unsafe_allow_html=True)
