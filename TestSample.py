@@ -9,16 +9,24 @@ df = pd.read_csv(file_path)
 # Set page config for a better layout
 st.set_page_config(page_title="University Dashboard", layout="wide")
 
-# Title with a colored background
+# Custom CSS for better aesthetics
 st.markdown("""
     <style>
     .title {
         text-align: center;
-        font-size: 36px;
+        font-size: 42px;
+        font-weight: bold;
         color: white;
-        background-color: #4CAF50;
-        padding: 10px;
+        background-color: #007BFF;
+        padding: 15px;
+        border-radius: 12px;
+    }
+    .metric-card {
+        background-color: #f8f9fa;
+        padding: 15px;
         border-radius: 10px;
+        text-align: center;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     }
     </style>
     <div class='title'>University Admissions & Student Satisfaction Dashboard</div>
@@ -27,23 +35,23 @@ st.markdown("""
 # KPI Metrics with colorful cards
 st.subheader("📊 Key Metrics")
 col1, col2, col3 = st.columns(3)
-col1.metric("Total Applications", df['Applications'].sum(), "📌")
-col2.metric("Total Admitted", df['Admitted'].sum(), "✅")
-col3.metric("Total Enrolled", df['Enrolled'].sum(), "🎓")
+col1.markdown("<div class='metric-card'>📌 <b>Total Applications</b><br>{}</div>".format(df['Applications'].sum()), unsafe_allow_html=True)
+col2.markdown("<div class='metric-card'>✅ <b>Total Admitted</b><br>{}</div>".format(df['Admitted'].sum()), unsafe_allow_html=True)
+col3.markdown("<div class='metric-card'>🎓 <b>Total Enrolled</b><br>{}</div>".format(df['Enrolled'].sum()), unsafe_allow_html=True)
 
 # Retention Rate Trends
 st.subheader("📈 Retention Rate Trends")
 grouped_year = df.groupby("Year")["Retention Rate (%)"].mean().reset_index()
-fig_retention = px.line(grouped_year, x="Year", y="Retention Rate (%)", 
+fig_retention = px.area(grouped_year, x="Year", y="Retention Rate (%)", 
                          title="Retention Rate Over Time", markers=True, 
-                         color_discrete_sequence=["#FF5733"])
+                         color_discrete_sequence=["#FF5733"], template="plotly_dark")
 st.plotly_chart(fig_retention, use_container_width=True)
 
 # Satisfaction Trends
 st.subheader("😊 Student Satisfaction Trends")
 fig_satisfaction = px.line(df, x="Year", y="Student Satisfaction (%)", color="Term", 
                            title="Student Satisfaction Over Time", markers=True, 
-                           color_discrete_map={"Spring": "#FFA07A", "Fall": "#20B2AA"})
+                           color_discrete_map={"Spring": "#FFA07A", "Fall": "#20B2AA"}, template="plotly_dark")
 st.plotly_chart(fig_satisfaction, use_container_width=True)
 
 # Enrollment Breakdown by Department
@@ -52,20 +60,24 @@ department_cols = ["Engineering Enrolled", "Business Enrolled", "Arts Enrolled",
 department_data = df.melt(id_vars=["Year", "Term"], value_vars=department_cols, var_name="Department", value_name="Enrollment")
 fig_enrollment = px.bar(department_data, x="Year", y="Enrollment", color="Department", 
                          barmode="group", title="Enrollment by Department", 
-                         color_discrete_sequence=["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"])
+                         color_discrete_sequence=["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"], template="plotly_dark")
 st.plotly_chart(fig_enrollment, use_container_width=True)
 
 # Spring vs Fall Comparison
 st.subheader("🔄 Spring vs Fall Enrollment Comparison")
 fig_term_comparison = px.bar(df, x="Year", y="Enrolled", color="Term", 
                              barmode="group", title="Enrollment Trends: Spring vs Fall", 
-                             color_discrete_map={"Spring": "#17BECF", "Fall": "#9467BD"})
+                             color_discrete_map={"Spring": "#17BECF", "Fall": "#9467BD"}, template="plotly_dark")
 st.plotly_chart(fig_term_comparison, use_container_width=True)
 
-# Insights Section
+# Insights Section with Highlighted Box
 st.subheader("🔍 Key Insights")
 st.markdown("""
-- 📈 **Retention and satisfaction have steadily increased over the years.**
-- 🎓 **Engineering sees the highest enrollment, followed by Business.**
-- 🍂 **Fall enrollments are generally higher than Spring enrollments.**
-""")
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+    <ul>
+    <li>📈 <b>Retention and satisfaction have steadily increased over the years.</b></li>
+    <li>🎓 <b>Engineering sees the highest enrollment, followed by Business.</b></li>
+    <li>🍂 <b>Fall enrollments are generally higher than Spring enrollments.</b></li>
+    </ul>
+    </div>
+""", unsafe_allow_html=True)
